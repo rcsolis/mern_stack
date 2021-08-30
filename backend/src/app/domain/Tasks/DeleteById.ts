@@ -5,22 +5,29 @@
  * @description Delete project by Id
  * @requires
  */
-import { mockTasks } from "../../../mocks/Tasks";
+import MongoAdapter from "../../interfaces/database/mongo";
 
 export default class DeleteTaskById {
 	private id: string;
+	private database: MongoAdapter;
 
 	constructor(id: string) {
 		this.id = id.trim();
+		this.database = new MongoAdapter();
 	}
 
-	exec() {
+	async exec() {
 		if (!this.id || this.id === "")
 			throw new Error("Task not found, missing ID.");
 
 		//Delete in database
-		const res = mockTasks.findIndex((el) => el.id === this.id);
-		if (!res) throw new Error("Task not found.");
-		mockTasks.splice(res, 1);
+		try {
+			const document = await this.database.TaskModel.findByIdAndRemove(
+				this.id
+			);
+			if (!document) throw new Error("Task cannot be deleted.");
+		} catch (err) {
+			throw new Error(`Remove task error, ${err}`);
+		}
 	}
 }

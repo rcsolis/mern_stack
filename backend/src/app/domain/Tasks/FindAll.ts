@@ -5,8 +5,8 @@
  * @description Get all tasks
  * @requires entities.Tasks
  */
-import { mockTasks } from "../../../mocks/Tasks";
 import { iTask } from "../../entities/Tasks";
+import MongoAdapter from "../../interfaces/database/mongo";
 
 export default class FindAllTasks {
 	private tasks: Array<iTask>;
@@ -15,21 +15,26 @@ export default class FindAllTasks {
 		this.tasks = [];
 	}
 
-	exec(): Array<iTask> {
+	async exec(): Promise<Array<iTask>> {
 		// Get from database
-		const data = mockTasks;
-		// Parse to Entitys
-		data.forEach((row) => {
-			this.tasks.push({
-				projectId: row.projectId,
-				id: row.id,
-				name: row.name,
-				done: row.done,
-				updated_at: row.updated_at,
-				created_at: row.created_at,
-				deadline: row.deadline,
+		try {
+			const db = new MongoAdapter();
+			const data = await db.TaskModel.find();
+			// Parse to Entities
+			data.forEach((row) => {
+				this.tasks.push({
+					projectId: row.projectId.toString(),
+					_id: row._id?row._id.toString():row.toString(),
+					name: row.name,
+					done: row.done,
+					updated_at: row.updated_at,
+					created_at: row.created_at,
+					deadline: row.deadline,
+				});
 			});
-		});
-		return this.tasks;
+			return this.tasks;
+		} catch (err) {
+			throw new Error("");
+		}
 	}
 }

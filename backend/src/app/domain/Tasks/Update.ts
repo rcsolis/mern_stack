@@ -5,19 +5,20 @@
  * @description Update task data
  * @requires types
  */
-import { mockTasks } from "../../../mocks/Tasks";
 import { iTask } from "../../entities/Tasks";
+import MongoAdapter from "../../interfaces/database/mongo";
 import { UpdateTask } from "./types";
 
 export default class UpdateTaskById {
 	private id: string;
 	private assigned: boolean;
 	private task: iTask;
+	private database: MongoAdapter;
 
 	constructor(id: string) {
 		this.id = id.trim();
 		this.task = {
-			id: "",
+			_id: "",
 			projectId: "",
 			name: "",
 			deadline: new Date(),
@@ -25,6 +26,7 @@ export default class UpdateTaskById {
 			created_at: new Date(),
 			done: false,
 		};
+		this.database = new MongoAdapter();
 		this.assigned = false;
 	}
 
@@ -36,23 +38,30 @@ export default class UpdateTaskById {
 		if (!ntask.deadline) throw new Error("Task deadline is required");
 
 		this.task.name = ntask.name.trim();
-		this.task.projectId = ntask.projectId.trim();
 		this.task.deadline = ntask.deadline;
 		this.task.done = ntask.done;
 		this.assigned = true;
 	}
 
-	exec() {
+	async exec() {
 		if (!this.assigned) {
 			throw new Error("Updated data is not assigned");
 		}
-		// Save to database
-		const resIdx = mockTasks.findIndex((el) => el.id === this.id);
-
-		if (resIdx === -1) throw new Error("Project not found.");
-		const res = mockTasks[resIdx];
-		this.task.id = res.id;
-		this.task.created_at = res.created_at;
-		mockTasks.splice(resIdx, 1, this.task);
+		// Save to database	
+		try {
+			const document = await this.database.TaskModel.findByIdAndUpdate(this.id, {
+				$set: {
+					name: this.task.name,
+					deadline: this.task.deadline,
+					done: this.task.done,
+					updated_at: this.task.updated_at
+				}
+			}, { upsert: true });
+			if (!document)
+				throw new Error("Task cannot be updated.");
+			
+		} catch (err) {
+			throw new Error(`Update task error, ${err}`);
+		}
 	}
 }

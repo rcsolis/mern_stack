@@ -9,7 +9,8 @@ import { resolve } from "path";
 import { config } from "dotenv";
 // Load enviroment variables
 const enviroment = async (fileName: string) => {
-	await config({ path: resolve(__dirname, "../" + fileName) });
+	const res = await config({ path: resolve(__dirname, "../../" + fileName) });
+	console.error(res);
 };
 // Exports
 export default enviroment;

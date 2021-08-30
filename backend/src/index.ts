@@ -10,14 +10,16 @@ import Server from "./app/interfaces/server";
 import morgan from "morgan";
 import taskRoutes from "./app/routes/Tasks/routes";
 import projectRoutes from "./app/routes/Projects/routes";
+import MongoAdapter from "./app/interfaces/database/mongo";
 
 // Main function
 const main = async () => {
 	try {
 		// Load enviroment variables
 		await enviroment(".dev.env");
-		// Config database
-
+		// Connect to database
+		const dataBase = new MongoAdapter();
+		dataBase.connect();
 		// Config server
 		const server = new Server(
 			[morgan("combined")],

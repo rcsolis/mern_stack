@@ -5,7 +5,7 @@
  * @description Define route handlers for tasks
  * @requires express, entities.iTask, domain.Tasks.FindAll, domain.Tasks.GetAllDoneTasks, domain.Tasks.GetDoneTasksOfProject, domain.Tasks.GetTaskById, domain.Tasks.GetAllPendingTasks, domain.Tasks.GetPendingTasksOfProject, domain.Tasks.Create, domain.Tasks.UpdateStatus, domain.Tasks.DeleteById, domain.Tasks.Update
  */
-import { Request, response, Response } from "express";
+import { Request, Response } from "express";
 import FindAllTasks from "../../domain/Tasks/FindAll";
 import GetAllDoneTasks from "../../domain/Tasks/GetAllDone";
 import GetDoneTasksOfProject from "../../domain/Tasks/GetDoneByProject";
@@ -19,22 +19,27 @@ import UpdateTaskById from "../../domain/Tasks/Update";
 import { iTask } from "../../entities/Tasks";
 
 export default class TaskController {
-	getAll(request: Request, response: Response) {
+	async getAll(request: Request, response: Response) {
 		// use case getall projects
-		const useCase = new FindAllTasks();
-		const data: Array<iTask> = useCase.exec();
-		// send response
-		response.status(200).json(data);
+		try {
+			const useCase = new FindAllTasks();
+			const data: Array<iTask> = await useCase.exec();
+			// send response
+			response.status(200).json(data);
+		} catch (err) {
+			console.error(err);
+			response.status(500).end(`Unexpected error. ${err}`);
+		}
 	}
 
-	getById(request: Request, response: Response) {
+	async getById(request: Request, response: Response) {
 		const params = request.params;
 		if (!params || !params.id)
 			response.status(400).end("Bad request, No params.");
 		// Use case get by id
-		const useCase = new GetTaskById(params.id);
 		try {
-			const data = useCase.exec();
+			const useCase = new GetTaskById(params.id);
+			const data = await useCase.exec();
 			if (!data) response.status(404).end("Task not found");
 			response.status(200).send(data);
 		} catch (err) {
@@ -43,19 +48,19 @@ export default class TaskController {
 		}
 	}
 
-	getDone(request: Request, response: Response) {
+	async getDone(request: Request, response: Response) {
 		// Getting params
 		const params = request.params;
 		let useCase = null;
-		if (!params || !params.id) {
-			// Get all tasks done
-			useCase = new GetAllDoneTasks();
-		} else {
-			// Get all tasks done of the project
-			useCase = new GetDoneTasksOfProject(params.id);
-		}
 		try {
-			const data: Array<iTask> = useCase.exec();
+			if (!params || !params.id) {
+				// Get all tasks done
+				useCase = new GetAllDoneTasks();
+			} else {
+				// Get all tasks done of the project
+				useCase = new GetDoneTasksOfProject(params.id);
+			}
+			const data: Array<iTask> = await useCase.exec();
 			if (!data) response.status(404).end("Tasks not found");
 			response.status(200).json(data);
 		} catch (err) {
@@ -64,19 +69,19 @@ export default class TaskController {
 		}
 	}
 
-	getPending(request: Request, response: Response) {
+	async getPending(request: Request, response: Response) {
 		// Getting params
 		const params = request.params;
 		let useCase = null;
-		if (!params || !params.id) {
-			// Get all tasks done
-			useCase = new GetAllPendingTasks();
-		} else {
-			// Get all tasks done of the project
-			useCase = new GetPendingTasksOfProject(params.id);
-		}
 		try {
-			const data: Array<iTask> = useCase.exec();
+			if (!params || !params.id) {
+				// Get all tasks done
+				useCase = new GetAllPendingTasks();
+			} else {
+				// Get all tasks done of the project
+				useCase = new GetPendingTasksOfProject(params.id);
+			}
+			const data: Array<iTask> = await useCase.exec();
 			if (!data) response.status(404).end("Tasks not found");
 			response.status(200).json(data);
 		} catch (err) {
@@ -85,15 +90,15 @@ export default class TaskController {
 		}
 	}
 
-	create(request: Request, response: Response) {
+	async create(request: Request, response: Response) {
 		// Getting data
 		const body = request.body;
 		if (!body) {
 			response.status(400).end("Bad request. Data is missing.");
 		}
 		// Use case for create
-		const useCase = new CreateTask();
 		try {
+			const useCase = new CreateTask();
 			useCase.setData(body);
 			useCase.exec();
 			response.status(201).send("Task created.");
@@ -103,7 +108,7 @@ export default class TaskController {
 		}
 	}
 
-	deleteById(request: Request, response: Response) {
+	async deleteById(request: Request, response: Response) {
 		// Getting parameters
 		const params = request.params;
 		if (!params || !params.id)
@@ -119,7 +124,7 @@ export default class TaskController {
 		}
 	}
 
-	isDone(request: Request, response: Response) {
+	async isDone(request: Request, response: Response) {
 		// Getting parameters
 		const params = request.params;
 		if (!params || !params.id)
@@ -135,7 +140,7 @@ export default class TaskController {
 		}
 	}
 
-	updateById(request: Request, response: Response) {
+	async updateById(request: Request, response: Response) {
 		// Getting parameters
 		const params = request.params;
 		if (!params || !params.id)

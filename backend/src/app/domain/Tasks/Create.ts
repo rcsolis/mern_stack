@@ -5,55 +5,52 @@
  * @description Create new task
  * @requires entities.Tasks
  */
-
-import { mockTasks } from "../../../mocks/Tasks";
 import { iTask } from "../../entities/Tasks";
+import MongoAdapter from "../../interfaces/database/mongo";
 import { NewTask } from "./types";
 
 export default class CreateTask {
-	private task: iTask;
 	private assigned: boolean;
+	private database: MongoAdapter;
+	private task: iTask;
 
 	constructor() {
+		this.assigned = false;
+		this.database = new MongoAdapter();
 		this.task = {
-			id: "",
 			projectId: "",
 			name: "",
-			done: false,
-			created_at: new Date(),
 			deadline: new Date(),
-			updated_at: new Date(),
+			created_at: new Date(),
+			done: false,
 		};
-		this.assigned = false;
 	}
 
-	setData(task: NewTask) {
-		if (!task.projectId || task.projectId === "")
+	setData(param: NewTask) {
+		if (!param.projectId || param.projectId === "")
 			throw new Error("Missing project Id.");
-		if (!task.name || task.name === "")
+		if (!param.name || param.name === "")
 			throw new Error("Missing Task name.");
-		if (!task.deadline) throw new Error("Missing Task deadline.");
-
-		this.task.projectId = task.projectId.trim();
-		this.task.name = task.name.trim();
-		this.task.deadline = task.deadline || new Date();
-		this.task.created_at = new Date();
-		this.task.updated_at = new Date();
-		this.task.done = task.done;
-		this.assigned = true;
+		if (!param.deadline) throw new Error("Missing Task deadline.");
+		try {
+			this.task.projectId = param.projectId;
+			this.task.name = param.name.trim();
+			this.task.deadline = param.deadline || new Date();
+			this.assigned = true;		
+		} catch (err) {
+			console.error(err);
+			throw new Error(`Cannot set data to new task ${err}`);
+		}
 	}
 
-	exec() {
+	async exec() {
 		if (!this.assigned) throw new Error("New task data is not assigned");
 		// Save to database
-		const newId =
-			parseInt(
-				mockTasks[mockTasks.length - 1].id.substr(
-					1,
-					mockTasks[0].id.length
-				)
-			) + 111;
-		this.task.id = "t" + newId.toString();
-		mockTasks.push(this.task);
+		try {
+			const document = new this.database.TaskModel(this.task);
+			await document.save();
+		} catch (err) {
+			throw new Error(`Create task error, ${err}`);
+		}
 	}
 }

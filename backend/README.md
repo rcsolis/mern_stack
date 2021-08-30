@@ -1,4 +1,4 @@
-# PROJECTS AND TASKS SAMPLE APP
+## PROJECTS AND TASKS SAMPLE APP
 
 ## _This is the Backend_
 

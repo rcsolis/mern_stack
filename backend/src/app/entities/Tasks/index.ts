@@ -5,13 +5,12 @@
  * @description Define entity model of a Task
  * @requires
  */
-
 export interface iTask {
+	_id?: string;
 	projectId: string;
-	id: string;
 	name: string;
 	done: boolean;
 	deadline: Date;
-	created_at: Date;
-	updated_at: Date | null;
+	created_at?: Date;
+	updated_at?: Date;
 }
