@@ -5,7 +5,7 @@
  * @description Define route handlers for projects
  * @requires express, domain.Projects.Create, domain.Projects.DeleteById,domain.Projects.FindAll,domain.Projects.GetById,domain.Projects.GetDone,domain.Projects.GetPending,domain.Projects.Update, domain.Projects.UpdateStatus
  */
-import { Request, response, Response } from "express";
+import { Request, Response } from "express";
 import CreateProject from "../../domain/Projects/Create";
 import DeleteProjectById from "../../domain/Projects/DeleteById";
 import FindAllProjects from "../../domain/Projects/FindAll";
@@ -14,17 +14,23 @@ import GetDoneProjects from "../../domain/Projects/GetDone";
 import GetPendingProjects from "../../domain/Projects/GetPending";
 import UpdateProjectById from "../../domain/Projects/Update";
 import UpdateProjectStatus from "../../domain/Projects/UpdateStatus";
+import { iProject } from "../../entities/Project";
 
 export default class ProjectController {
-	getAll(request: Request, response: Response) {
-		// use case getall projects
-		const useCase = new FindAllProjects();
-		const data = useCase.exec();
-		// send response
-		response.status(200).json(data);
+	async getAll(request: Request, response: Response) {
+		try {
+			// use case getall projects
+			const useCase = new FindAllProjects();
+			const data: Array<iProject> = await useCase.exec();
+			// send response
+			response.status(200).json(data);
+		} catch (err) {
+			console.error(err);
+			response.status(500).end(`Unexpected error. ${err}`);
+		}
 	}
 
-	getById(request: Request, response: Response) {
+	async getById(request: Request, response: Response) {
 		// Get params
 		const params = request.params;
 		if (!params || !params.id)
@@ -37,7 +43,7 @@ export default class ProjectController {
 		response.status(200).json(data);
 	}
 
-	getPending(request: Request, response: Response) {
+	async getPending(request: Request, response: Response) {
 		// Use case get by id
 		const useCase = new GetPendingProjects();
 		const data = useCase.exec();
@@ -45,7 +51,7 @@ export default class ProjectController {
 		response.status(200).json(data);
 	}
 
-	getDone(request: Request, response: Response) {
+	async getDone(request: Request, response: Response) {
 		// Use case get by id
 		const useCase = new GetDoneProjects();
 		const data = useCase.exec();
@@ -53,7 +59,7 @@ export default class ProjectController {
 		response.status(200).json(data);
 	}
 
-	create(request: Request, response: Response) {
+	async create(request: Request, response: Response) {
 		// Data
 		const body = request.body;
 		if (!body) {
@@ -71,7 +77,7 @@ export default class ProjectController {
 		}
 	}
 
-	deleteById(request: Request, response: Response) {
+	async deleteById(request: Request, response: Response) {
 		// Getting parameters
 		const params = request.params;
 		if (!params || !params.id)
@@ -87,7 +93,7 @@ export default class ProjectController {
 		}
 	}
 
-	isDone(request: Request, response: Response) {
+	async isDone(request: Request, response: Response) {
 		// Getting parameters
 		const params = request.params;
 		if (!params || !params.id)
@@ -103,7 +109,7 @@ export default class ProjectController {
 		}
 	}
 
-	updateById(request: Request, response: Response) {
+	async updateById(request: Request, response: Response) {
 		// Getting parameters
 		const params = request.params;
 		if (!params || !params.id)
