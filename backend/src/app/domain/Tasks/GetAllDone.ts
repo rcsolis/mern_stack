@@ -1,10 +1,10 @@
 /**
- * @package domain.Tasks
+ * @package app.domain.Tasks.GetAllDone
  * @version 1.0.1
  * @author Rafael Chavez
- * @description Get all task done
- * @requires entities.Tasks
+ * @description Define the use case for get all done tasks
  */
+import Logger from "app/interfaces/logger";
 import { iTask } from "../../entities/Tasks";
 import MongoAdapter from "../../interfaces/database/mongo";
 export default class GetAllDoneTasks {
@@ -13,6 +13,7 @@ export default class GetAllDoneTasks {
 	constructor() {
 		this.tasks = [];
 		this.database = new MongoAdapter();
+		this.database.connect();
 	}
 
 	async exec() {
@@ -20,19 +21,15 @@ export default class GetAllDoneTasks {
 		try {
 			const data = await this.database.TaskModel.find({ done: true }).exec();
 			data.forEach((el) => {
-				if (el.done === true) this.tasks.push({
-					_id: el._id ? el._id.toString() : el.toString(),
-					projectId: el.projectId.toString(),
-					name: el.name.trim(),
-					created_at: el.created_at,
-					updated_at: el.updated_at,
-					deadline: el.deadline,
-					done: el.done,
-				});
+				if (el.done === true) this.tasks.push(el);
 			});
 			return this.tasks;	
 		} catch (err) {
+			Logger.error(` Error executing Get all done tasks by id. ${err} `);
 			throw new Error(`Get all done task error, ${err}`);
+		}
+		finally {
+			this.database.close();
 		}
 	}
 }

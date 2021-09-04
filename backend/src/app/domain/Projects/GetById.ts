@@ -1,29 +1,36 @@
 /**
- * @package domain.Projects
+ * @package app.domain.Projects.GetById
  * @version 1.0.1
  * @author Rafael Chavez
- * @description Get all tasks
- * @requires entities.Project,
+ * @description Use case for Get all projects
  */
-import { mockProjects } from "../../../mocks/Projects";
-import { iProject } from "../../entities/Project";
+import MongoAdapter from "app/interfaces/database/mongo";
+import Logger from "app/interfaces/logger";
 
 export default class GetProjectById {
 	private id: string;
+	private database: MongoAdapter;
 
 	constructor(id: string) {
 		this.id = id.trim();
+		this.database = new MongoAdapter();
+		this.database.connect();
 	}
 
-	exec(): iProject | null {
-		if (!this.id) return null;
-
-		// Get from database
-		const data: iProject | undefined = mockProjects.find(
-			(el) => el.id === this.id
-		);
-		if (!data) return null;
-
-		return data;
+	async exec() {
+		if (!this.id || this.id === "") {
+			throw new Error("Error, get project by id, missing id.");
+		}
+		try {
+			const document = await this.database.ProjectModel.findById(this.id);
+			if (!document)
+				throw new Error(`Project not found ${this.id}`);
+			return document;
+		} catch (err) {
+			Logger.error(`Error on find document by id, ${err}`);
+			throw new Error(`Error on find document by id, ${err}`);
+		} finally {
+			this.database.close();
+		}
 	}
 }

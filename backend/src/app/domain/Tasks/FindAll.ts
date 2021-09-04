@@ -1,40 +1,36 @@
 /**
- * @package domain.Tasks
+ * @package app.domain.Tasks.FindAll
  * @version 1.0.1
  * @author Rafael Chavez
- * @description Get all tasks
- * @requires entities.Tasks
+ * @description Define the use case for Get all tasks
  */
+import Logger from "app/interfaces/logger";
 import { iTask } from "../../entities/Tasks";
 import MongoAdapter from "../../interfaces/database/mongo";
 
 export default class FindAllTasks {
 	private tasks: Array<iTask>;
-
+	private database: MongoAdapter;
 	constructor() {
 		this.tasks = [];
+		this.database = new MongoAdapter();
+		this.database.connect();
 	}
 
 	async exec(): Promise<Array<iTask>> {
 		// Get from database
 		try {
-			const db = new MongoAdapter();
-			const data = await db.TaskModel.find();
+			const data = await this.database.TaskModel.find();
 			// Parse to Entities
 			data.forEach((row) => {
-				this.tasks.push({
-					projectId: row.projectId.toString(),
-					_id: row._id?row._id.toString():row.toString(),
-					name: row.name,
-					done: row.done,
-					updated_at: row.updated_at,
-					created_at: row.created_at,
-					deadline: row.deadline,
-				});
+				this.tasks.push(row);
 			});
 			return this.tasks;
 		} catch (err) {
-			throw new Error("");
+			Logger.error(` Error executing FindAll ${err}`);
+			throw new Error(`${err}`);
+		} finally {
+			this.database.close();
 		}
 	}
 }

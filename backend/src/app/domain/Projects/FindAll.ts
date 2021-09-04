@@ -1,33 +1,35 @@
 /**
- * @package domain.Projects
+ * @package app.domain.Projects.FindAll
  * @version 1.0.1
  * @author Rafael Chavez
- * @description Get all tasks
- * @requires entities.Project,
+ * @description Use case for get all projects
  */
-import { mockProjects } from "../../../mocks/Projects";
+import MongoAdapter from "app/interfaces/database/mongo";
+import Logger from "app/interfaces/logger";
 import { iProject } from "../../entities/Project";
 
 export default class FindAllProjects {
 	private projects: Array<iProject>;
-
+	private database: MongoAdapter;
 	constructor() {
 		this.projects = [];
+		this.database = new MongoAdapter();
+		this.database.connect();
 	}
 
-	exec() {
+	async exec() {
 		//Get from database
-		const data = mockProjects;
-		data.forEach((row) =>
-			this.projects.push({
-				id: row.id,
-				name: row.name,
-				description: row.description,
-				created_at: row.created_at,
-				updated_at: row.updated_at,
-				done: row.done,
-			})
-		);
-		return this.projects;
+		try {
+			const data = await this.database.ProjectModel.find();
+			data.forEach((row) =>
+				this.projects.push(row)
+			);
+			return this.projects;
+		} catch (err) {
+			Logger.error(` Error on find all projects, ${err} `);
+			throw new Error(`Error on find all projects, ${err}`);
+		} finally {
+			this.database.close();
+		}
 	}
 }

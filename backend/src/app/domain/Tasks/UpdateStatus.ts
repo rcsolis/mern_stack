@@ -1,10 +1,10 @@
 /**
- * @package domain.Tasks
+ * @package app.domain.Tasks.UpdateStatus
  * @version 1.0.1
  * @author Rafael Chavez
- * @description Mark task as done
- * @requires express, entities.iTask
+ * @description Use case for Mark task as done
  */
+import Logger from "app/interfaces/logger";
 import MongoAdapter from "../../interfaces/database/mongo";
 
 export default class UpdateTaskStatus {
@@ -14,6 +14,7 @@ export default class UpdateTaskStatus {
 	constructor(id: string) {
 		this.id = id.trim();
 		this.database = new MongoAdapter();
+		this.database.connect();
 	}
 
 	async exec() {
@@ -30,8 +31,12 @@ export default class UpdateTaskStatus {
 				{ upsert: true }
 			);
 			if (!document) throw new Error("Task cannot be updated.");
+			Logger.info(` Task status updated, ${document}`);
 		} catch (err) {
+			Logger.error(` Error on update task status ${err} `);
 			throw new Error(`Update task error, ${err}`);
+		} finally {
+			this.database.close();
 		}
 	}
 }

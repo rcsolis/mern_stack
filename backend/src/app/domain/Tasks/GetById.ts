@@ -1,13 +1,11 @@
-import { iTask } from "../../entities/Tasks";
-import MongoAdapter from "../../interfaces/database/mongo";
-
 /**
- * @package domain.Tasks
+ * @package app.domain.Tasks.GetById
  * @version 1.0.1
  * @author Rafael Chavez
- * @description Define route handlers for tasks
- * @requires
+ * @description Define use case for get task by id
  */
+import Logger from "app/interfaces/logger";
+import MongoAdapter from "../../interfaces/database/mongo";
 export default class GetTaskById {
 	private id: string;
 	private database: MongoAdapter;
@@ -15,6 +13,7 @@ export default class GetTaskById {
 	constructor(id: string) {
 		this.id = id.trim();
 		this.database = new MongoAdapter();
+		this.database.connect();
 	}
 
 	async exec() {
@@ -23,18 +22,12 @@ export default class GetTaskById {
 		try {
 			const data = await this.database.TaskModel.findById(this.id);
 			if (!data) throw new Error("Task not found.");
-			const task: iTask = {
-				_id: data._id ? data._id.toString() : data.toString(),
-				projectId: data.projectId.toString(),
-				name: data.name.trim(),
-				created_at: data.created_at,
-				updated_at: data.updated_at,
-				deadline: data.deadline,
-				done: data.done,
-			};
-			return task;
+			return data;
 		} catch (err) {
+			Logger.error(` Error executing Get task by id. ${err} `);
 			throw new Error(`Get task error, ${err}`);
+		} finally {
+			this.database.close();
 		}
 	}
 }

@@ -1,23 +1,24 @@
 /**
- * @package interfaces.database
+ * @package app.interfaces.database.mongo
  * @version 1.0.1
  * @author Rafael Chavez
- * @description Define entity model of a Task
- * @requires mongoose, models
+ * @description Define MongoDB Adapter
  */
 
-import { model, connect, Model } from "mongoose";
-import { imTask, imProject, TaskSchema, ProjectSchema } from "./models";
+import { iProject } from "app/entities/Project";
+import { iTask } from "app/entities/Tasks";
+import mongoose, { model, connect, Model } from "mongoose";
+import { ProjectSchema, TaskSchema } from "./models";
 
 export default class MongoAdapter {
 	private connectionStr: string;
-	public TaskModel: Model<imTask>;
-	public ProjectModel: Model<imProject>;
+	public TaskModel: Model<iTask>;
+	public ProjectModel: Model<iProject>;
 
 	constructor () {
 		this.connectionStr = `mongodb://${process.env.DB_HOST}:${process.env.DB_PORT}/${process.env.DB_NAME}`;
-		this.TaskModel = model<imTask>("Task", TaskSchema);
-		this.ProjectModel = model<imProject>("Project", ProjectSchema);
+		this.TaskModel = model<iTask>("Task", TaskSchema);
+		this.ProjectModel = model<iProject>("Project", ProjectSchema);
 	}
 
 	async connect (): Promise<void> {
@@ -32,5 +33,9 @@ export default class MongoAdapter {
 		} catch (err) {
 			throw new Error(`Connection Error: ${err}`);
 		}
+	}
+
+	async close (): Promise<void> {
+		await mongoose.connection.close();
 	}
 }

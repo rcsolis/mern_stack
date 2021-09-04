@@ -1,10 +1,10 @@
 /**
- * @package domain.Tasks
+ * @package app.domain.Tasks.Update
  * @version 1.0.1
  * @author Rafael Chavez
- * @description Update task data
- * @requires types
+ * @description Define the use case for Update task
  */
+import Logger from "app/interfaces/logger";
 import { iTask } from "../../entities/Tasks";
 import MongoAdapter from "../../interfaces/database/mongo";
 import { UpdateTask } from "./types";
@@ -18,7 +18,6 @@ export default class UpdateTaskById {
 	constructor(id: string) {
 		this.id = id.trim();
 		this.task = {
-			_id: "",
 			projectId: "",
 			name: "",
 			deadline: new Date(),
@@ -27,6 +26,7 @@ export default class UpdateTaskById {
 			done: false,
 		};
 		this.database = new MongoAdapter();
+		this.database.connect();
 		this.assigned = false;
 	}
 
@@ -59,9 +59,12 @@ export default class UpdateTaskById {
 			}, { upsert: true });
 			if (!document)
 				throw new Error("Task cannot be updated.");
-			
+			Logger.info(` Task updated, ${document}`);
 		} catch (err) {
+			Logger.error(` Error on Updating a task ${err} `);
 			throw new Error(`Update task error, ${err}`);
+		} finally {
+			this.database.close();
 		}
 	}
 }

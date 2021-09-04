@@ -1,26 +1,34 @@
 /**
- * @package domain.Projects
+ * @package app.domain.Projects.DeleteById
  * @version 1.0.1
  * @author Rafael Chavez
- * @description Delete project by Id
- * @requires entities.Project,
+ * @description Use case for Delete project by Id
  */
-import { mockProjects } from "../../../mocks/Projects";
+
+import MongoAdapter from "app/interfaces/database/mongo";
+import Logger from "app/interfaces/logger";
 
 export default class DeleteProjectById {
 	private id: string;
-
+	private database: MongoAdapter;
 	constructor(id: string) {
 		this.id = id.trim();
+		this.database = new MongoAdapter();
+		this.database.connect();
 	}
 
-	exec() {
+	async exec() {
 		if (!this.id || this.id === "")
 			throw new Error("Project not found, missing ID.");
-
-		//Delete in database
-		const res = mockProjects.findIndex((el) => el.id === this.id);
-		if (!res) throw new Error("Project not found.");
-		mockProjects.splice(res, 1);
+		try {
+			//Delete in database
+			const document = await this.database.TaskModel.findByIdAndRemove(this.id);
+			if (!document) throw new Error(`Project cannot be deleted. ${this.id}`);
+			Logger.info(` Project deleted ${document}`);
+		} catch (err) {
+			Logger.error(` Error on delete project by id, ${err} `);
+		} finally {
+			this.database.close();
+		}
 	}
 }

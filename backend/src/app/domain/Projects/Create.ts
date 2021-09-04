@@ -1,27 +1,29 @@
 /**
- * @package domain.Projects
+ * @package app.domain.Projects.Create
  * @version 1.0.1
  * @author Rafael Chavez
- * @description Create a new project
- * @requires types
+ * @description Use case for Create a new project
  */
-import { mockProjects } from "../../../mocks/Projects";
+import MongoAdapter from "app/interfaces/database/mongo";
+import Logger from "app/interfaces/logger";
 import { iProject } from "../../entities/Project";
 import { NewProject } from "./types";
 
 export default class CreateProject {
 	private project: iProject;
 	private assigned: boolean;
+	private database: MongoAdapter;
 	constructor() {
 		this.assigned = false;
 		this.project = {
-			id: "",
 			name: "",
 			description: "",
 			done: false,
 			created_at: new Date(),
 			updated_at: new Date(),
 		};
+		this.database = new MongoAdapter();
+		this.database.connect();
 	}
 
 	setData(param: NewProject) {
@@ -29,26 +31,31 @@ export default class CreateProject {
 			throw new Error("Project name is required");
 		if (!param.description.trim() || param.name.trim() === "")
 			throw new Error("Project description is required");
-
-		this.project.name = param.name.trim();
-		this.project.description = param.description.trim();
-		this.project.done = param.done;
-		this.assigned = true;
+		try {
+			this.project.name = param.name.trim();
+			this.project.description = param.description.trim();
+			this.project.done = param.done;
+			this.assigned = true;
+		} catch (err) {
+			Logger.error(` Error on set data for create project: ${err} `);
+			throw new Error(` Set project data error, ${err} `);
+		}
 	}
 
-	exec() {
+	async exec() {
 		if (!this.assigned) {
 			throw new Error("New project data is not assigned");
 		}
-		// Save to database
-		const newId =
-			parseInt(
-				mockProjects[mockProjects.length - 1].id.substr(
-					1,
-					mockProjects[0].id.length
-				)
-			) + 111;
-		this.project.id = "p" + newId.toString();
-		mockProjects.push(this.project);
+		try {
+			// Save to database
+			const document = new this.database.ProjectModel(this.project);
+			await document.save();
+			Logger.info(` New project created ${document} `);
+		} catch (err) {
+			Logger.error(` Error executing create new project. ${err} `);
+			throw new Error(` Create project error, ${err} `);
+		} finally {
+			this.database.close();
+		}
 	}
 }

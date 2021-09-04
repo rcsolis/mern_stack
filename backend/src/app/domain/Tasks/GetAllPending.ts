@@ -1,10 +1,10 @@
 /**
- * @package domain.Tasks
+ * @package app.domain.Tasks.GetAllPending
  * @version 1.0.1
  * @author Rafael Chavez
- * @description Get all pending task
- * @requires entities.Tasks
+ * @description Define the use case for Get all pending task
  */
+import Logger from "app/interfaces/logger";
 import { iTask } from "../../entities/Tasks";
 import MongoAdapter from "../../interfaces/database/mongo";
 
@@ -14,6 +14,7 @@ export default class GetAllPendingTasks {
 	constructor() {
 		this.tasks = [];
 		this.database = new MongoAdapter();
+		this.database.connect();
 	}
 
 	async exec() {
@@ -23,20 +24,14 @@ export default class GetAllPendingTasks {
 				done: false,
 			}).exec();
 			data.forEach((el) => {
-				if (el.done === true)
-					this.tasks.push({
-						_id: el._id ? el._id.toString() : el.toString(),
-						projectId: el.projectId.toString(),
-						name: el.name.trim(),
-						created_at: el.created_at,
-						updated_at: el.updated_at,
-						deadline: el.deadline,
-						done: el.done,
-					});
+				if (el.done === true) this.tasks.push(el);
 			});
 			return this.tasks;
 		} catch (err) {
-			throw new Error(`Get all done task error, ${err}`);
+			Logger.error(` Error executing Getting all pending task. ${err} `);
+			throw new Error(`Get all pending task error, ${err}`);
+		} finally {
+			this.database.close();
 		}
 	}
 }

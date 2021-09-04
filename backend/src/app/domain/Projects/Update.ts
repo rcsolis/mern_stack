@@ -1,12 +1,12 @@
 /**
- * @package domain.Projects
+ * @package app.domain.Projects.Update
  * @version 1.0.1
  * @author Rafael Chavez
- * @description Update project data
+ * @description Use case for Update project by id
  * @requires types
  */
-
-import { mockProjects } from "../../../mocks/Projects";
+import MongoAdapter from "app/interfaces/database/mongo";
+import Logger from "app/interfaces/logger";
 import { iProject } from "../../entities/Project";
 import { UpdateProject } from "./types";
 
@@ -14,11 +14,11 @@ export default class UpdateProjectById {
 	private id: string;
 	private assigned: boolean;
 	private project: iProject;
+	private database: MongoAdapter;
 
 	constructor(id: string) {
 		this.id = id.trim();
 		this.project = {
-			id: "",
 			name: "",
 			description: "",
 			updated_at: new Date(),
@@ -26,6 +26,8 @@ export default class UpdateProjectById {
 			done: false,
 		};
 		this.assigned = false;
+		this.database = new MongoAdapter();
+		this.database.connect();
 	}
 
 	setData(nproject: UpdateProject) {
@@ -40,16 +42,31 @@ export default class UpdateProjectById {
 		this.assigned = true;
 	}
 
-	exec() {
+	async exec() {
 		if (!this.assigned) {
 			throw new Error("Updated data is not assigned");
 		}
 		// Save to database
-		const resIdx = mockProjects.findIndex((el) => el.id === this.id);
-		if (resIdx === -1) throw new Error("Project not found.");
-		const res = mockProjects[resIdx];
-		this.project.id = res.id;
-		this.project.created_at = res.created_at;
-		mockProjects.splice(resIdx, 1, this.project);
+		try {
+			const document = await this.database.ProjectModel.findByIdAndUpdate(this.id, {
+				$set: {
+					name: this.project.name,
+					description: this.project.description,
+					done: this.project.done,
+					updated_at: this.project.updated_at
+				}
+			}, {
+				upsert: true
+			});
+			if (!document) {
+				throw new Error(` Update project fail, ${this.id} ${this.project} `);
+			}
+			Logger.info(`Project updated ${this.id} ${document}`);
+		} catch (err) {
+			Logger.error(` Error on update project by id, ${err} `);
+			throw new Error(` Error on update project by id, ${err} `);
+		} finally {
+			this.database.close();
+		}
 	}
 }

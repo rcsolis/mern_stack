@@ -1,29 +1,38 @@
 /**
- * @package domain.Project
+ * @package app.domain.Project.UpdateStatus
  * @version 1.0.1
  * @author Rafael Chavez
- * @description Update project set it as done
- * @requires express, entities.iProject
+ * @description Use case for update project status
  */
-import { mockProjects } from "../../../mocks/Projects";
-import { iProject } from "../../entities/Project";
-
+import MongoAdapter from "app/interfaces/database/mongo";
+import Logger from "app/interfaces/logger";
 export default class UpdateProjectStatus {
 	private id: string;
+	private database: MongoAdapter;
+
 	constructor(id: string) {
 		this.id = id.trim();
+		this.database = new MongoAdapter();
+		this.database.connect();
 	}
 
-	exec() {
-		if (!this.id || this.id === "") {
-			throw new Error("Project not found, missing ID.");
+	async exec() {
+		if (!this.id || this.id === "")
+			throw new Error("Update project by id Fail, missing id.");
+		try {
+			const document = await this.database.ProjectModel.findByIdAndUpdate(this.id, {
+				$set: {
+					done: true,
+				}
+			}, { upsert: true });
+			if (!document)
+				throw new Error(`Error on update project status ${this.id} ${document}`);
+			Logger.info(`Project updated ${this.id} ${document}`);
+		} catch (err) {
+			Logger.error(` Error update project status failed, ${err}`);
+			throw new Error(` Error update project status failed, ${err}`);
+		} finally {
+			this.database.close();
 		}
-		//Update database
-		const res = mockProjects.findIndex((el) => el.id === this.id);
-		if (!res) throw new Error("Project not found.");
-
-		const updated: iProject = mockProjects[res];
-		updated.done = true;
-		mockProjects.splice(res, 1, updated);
 	}
 }

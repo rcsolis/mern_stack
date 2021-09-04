@@ -1,10 +1,10 @@
 /**
- * @package controllers.Project
+ * @package app.controllers.Project
  * @version 1.0.1
  * @author Rafael Chavez
  * @description Define route handlers for projects
- * @requires express, domain.Projects.Create, domain.Projects.DeleteById,domain.Projects.FindAll,domain.Projects.GetById,domain.Projects.GetDone,domain.Projects.GetPending,domain.Projects.Update, domain.Projects.UpdateStatus
  */
+import Logger from "app/interfaces/logger";
 import { Request, Response } from "express";
 import CreateProject from "../../domain/Projects/Create";
 import DeleteProjectById from "../../domain/Projects/DeleteById";
@@ -23,46 +23,71 @@ export default class ProjectController {
 			const useCase = new FindAllProjects();
 			const data: Array<iProject> = await useCase.exec();
 			// send response
+			Logger.info(` Project::getAll:200 ${data}`);
 			response.status(200).json(data);
 		} catch (err) {
-			console.error(err);
+			Logger.error(` Project::getAll ${err}`);
 			response.status(500).end(`Unexpected error. ${err}`);
 		}
 	}
 
 	async getById(request: Request, response: Response) {
 		// Get params
-		const params = request.params;
-		if (!params || !params.id)
-			response.status(400).end("Bad request, No params.");
-		// Use case get by id
-		const useCase = new GetProjectById(params.id);
-		const data = useCase.exec();
-		if (!data) response.status(404).end("Project not Found");
-		// response ok
-		response.status(200).json(data);
+		try{
+			const params = request.params;
+			if (!params || !params.id) {
+				Logger.warn(` Project::GetById:400 Bad request, no params ${params}`);
+				response.status(400).end("Bad request, No params.");
+			}
+			// Use case get by id
+			const useCase = new GetProjectById(params.id);
+			const data = useCase.exec();
+			if (!data) {
+				Logger.warn(` Project::GetById:404 Not Found ${params}`);
+				response.status(404).end("Project not Found");
+			}
+			// response ok
+			Logger.info(` Project::GetById:200 ${data}`);
+			response.status(200).json(data);
+		}catch (err) {
+			Logger.error(` Project::GetById ${err}`);
+			response.status(500).end(`Unexpected error. ${err}`);
+		}
 	}
 
 	async getPending(request: Request, response: Response) {
 		// Use case get by id
-		const useCase = new GetPendingProjects();
-		const data = useCase.exec();
-		// response ok
-		response.status(200).json(data);
+		try {
+			const useCase = new GetPendingProjects();
+			const data = useCase.exec();
+			// response ok
+			Logger.info(` Project::GetPending:200 ${data}`);
+			response.status(200).json(data);
+		} catch (err) {
+			Logger.error(` Project::GetPending ${err}`);
+			response.status(500).end(`Unexpected error. ${err}`);
+		}
 	}
 
 	async getDone(request: Request, response: Response) {
-		// Use case get by id
-		const useCase = new GetDoneProjects();
-		const data = useCase.exec();
-		// response ok
-		response.status(200).json(data);
+		try {
+			// Use case get by id
+			const useCase = new GetDoneProjects();
+			const data = useCase.exec();
+			// response ok
+			Logger.info(` Project::GetDone:200 ${data}`);
+			response.status(200).json(data);
+		} catch (err) {
+			Logger.error(` Project::GetDone ${err}`);
+			response.status(500).end(`Unexpected error. ${err}`);
+		}
 	}
 
 	async create(request: Request, response: Response) {
 		// Data
 		const body = request.body;
 		if (!body) {
+			Logger.warn(` Project::create:400 Bad request ${body}`);
 			response.status(400).end("Bad request. Data is missing.");
 		}
 		// Use case for create
@@ -70,9 +95,11 @@ export default class ProjectController {
 		try {
 			useCase.setData(body);
 			useCase.exec();
+			//Created
+			Logger.info(` Project::create:201 ${body}`);
 			response.status(201).send("Project created.");
 		} catch (err) {
-			console.error(err);
+			Logger.error(` Project::create ${err}`);
 			response.status(500).end(`Data can not be processed. ${err}`);
 		}
 	}
@@ -80,15 +107,18 @@ export default class ProjectController {
 	async deleteById(request: Request, response: Response) {
 		// Getting parameters
 		const params = request.params;
-		if (!params || !params.id)
+		if (!params || !params.id) {
+			Logger.warn(` Project::create:400 Bad request ${params}`);
 			response.status(400).end("Bad request, No params.");
+		}
 		// Use case for delete item
 		const useCase = new DeleteProjectById(params.id);
 		try {
 			useCase.exec();
+			Logger.info(` Project::deleteById:200 Deleted ${params}`);
 			response.status(200).send("Project deleted.");
 		} catch (err) {
-			console.error(err);
+			Logger.error(` Project::deleteById ${err}`);
 			response.status(500).end(`Delete failed. ${err}`);
 		}
 	}
@@ -96,15 +126,18 @@ export default class ProjectController {
 	async isDone(request: Request, response: Response) {
 		// Getting parameters
 		const params = request.params;
-		if (!params || !params.id)
+		if (!params || !params.id) {
+			Logger.warn(` Project::isDone:400 Bad request ${params}`);
 			response.status(400).end("Bad request, No params.");
+		}
 		//Use case change status
 		const useCase = new UpdateProjectStatus(params.id);
 		try {
 			useCase.exec();
+			Logger.info(` Project::isDone:200 Deleted ${params}`);
 			response.status(200).send("Project updated.");
 		} catch (err) {
-			console.error(err);
+			Logger.error(` Project::isDone ${err}`);
 			response.status(500).end(`Update failed. ${err}`);
 		}
 	}
@@ -112,11 +145,14 @@ export default class ProjectController {
 	async updateById(request: Request, response: Response) {
 		// Getting parameters
 		const params = request.params;
-		if (!params || !params.id)
+		if (!params || !params.id) {
+			Logger.warn(` Project::updateById:400 Bad request ${params}`);
 			response.status(400).end("Bad request, No params.");
+		}
 		// Getting Body
 		const body = request.body;
 		if (!body) {
+			Logger.warn(` Project::updateById:400 Data is missing ${body}`);
 			response.status(400).end("Bad request. Data is missing.");
 		}
 		//Use case for update project
@@ -124,9 +160,10 @@ export default class ProjectController {
 		try {
 			useCase.setData(body);
 			useCase.exec();
+			Logger.info(` Project::updateById:200 Updated ${params}`);
 			response.status(200).send("Project updated");
 		} catch (err) {
-			console.error(err);
+			Logger.error(` Project::updateById ${err}`);
 			response.status(500).end(`Update failed. ${err}`);
 		}
 	}

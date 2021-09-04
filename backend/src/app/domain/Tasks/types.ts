@@ -1,9 +1,8 @@
 /**
- * @package domain.Tasks
+ * @package domain.Tasks.types
  * @version 1.0.1
  * @author Rafael Chavez
- * @description Types for task
- * @requires
+ * @description Types for task operations
  */
 
 export type NewTask = {
@@ -11,8 +10,8 @@ export type NewTask = {
 	name: string;
 	done: boolean | false;
 	deadline: Date;
-	created_at: Date | null;
-	updated_at: Date | null;
+	created_at?: Date;
+	updated_at?: Date;
 };
 
 export type UpdateTask = {
