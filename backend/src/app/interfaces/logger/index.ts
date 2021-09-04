@@ -33,12 +33,17 @@ const getLevel = () => {
 // Format
 const format = winston.format.combine(
 	winston.format.timestamp({ format: "YYYY-MM-DD HH:mm:ss:ms" }),
-	winston.format.colorize(),
 	winston.format.printf((info) => `${info.timestamp} ${info.level}: ${info.message}`)
 );
 //Create transports
 const transports = [
-	new winston.transports.Console(),
+	new winston.transports.Console({
+		format: winston.format.combine(
+			winston.format.colorize({
+				all: true,
+			})
+		),
+	}),
 	new winston.transports.DailyRotateFile({
 		filename: "error-%DATE%.log",
 		datePattern: "YYYY-MM-DD",

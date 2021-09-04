@@ -4,7 +4,7 @@
  * @author Rafael Chavez
  * @description Define the use case for Create new task
  */
-import Logger from "app/interfaces/logger";
+import Logger from "../../interfaces/logger";
 import { iTask } from "../../entities/Tasks";
 import MongoAdapter from "../../interfaces/database/mongo";
 import { NewTask } from "./types";

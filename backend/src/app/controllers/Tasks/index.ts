@@ -16,7 +16,7 @@ import UpdateTaskStatus from "../../domain/Tasks/UpdateStatus";
 import DeleteTaskById from "../../domain/Tasks/DeleteById";
 import UpdateTaskById from "../../domain/Tasks/Update";
 import { iTask } from "../../entities/Tasks";
-import Logger from "app/interfaces/logger";
+import Logger from "../../interfaces/logger";
 
 export default class TaskController {
 	async getAll(request: Request, response: Response) {

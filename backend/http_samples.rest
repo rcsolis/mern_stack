@@ -36,7 +36,7 @@ Content-Type: application/json
 }
 
 ### TASKS
-GET http://localhost:3000/tasks
+GET http://localhost:3000/tasks/
 
 ### GET TASK BY ID
 GET http://localhost:3000/tasks/get/t5234123

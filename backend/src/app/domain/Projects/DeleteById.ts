@@ -5,8 +5,8 @@
  * @description Use case for Delete project by Id
  */
 
-import MongoAdapter from "app/interfaces/database/mongo";
-import Logger from "app/interfaces/logger";
+import MongoAdapter from "../../interfaces/database/mongo";
+import Logger from "../../interfaces/logger";
 
 export default class DeleteProjectById {
 	private id: string;

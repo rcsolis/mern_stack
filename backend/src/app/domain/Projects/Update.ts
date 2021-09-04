@@ -5,8 +5,8 @@
  * @description Use case for Update project by id
  * @requires types
  */
-import MongoAdapter from "app/interfaces/database/mongo";
-import Logger from "app/interfaces/logger";
+import MongoAdapter from "../../interfaces/database/mongo";
+import Logger from "../../interfaces/logger";
 import { iProject } from "../../entities/Project";
 import { UpdateProject } from "./types";
 

@@ -4,8 +4,8 @@
  * @author Rafael Chavez
  * @description Use case for get all projects
  */
-import MongoAdapter from "app/interfaces/database/mongo";
-import Logger from "app/interfaces/logger";
+import MongoAdapter from "../../interfaces/database/mongo";
+import Logger from "../../interfaces/logger";
 import { iProject } from "../../entities/Project";
 
 export default class FindAllProjects {
@@ -20,10 +20,8 @@ export default class FindAllProjects {
 	async exec() {
 		//Get from database
 		try {
-			const data = await this.database.ProjectModel.find();
-			data.forEach((row) =>
-				this.projects.push(row)
-			);
+			const data = await this.database.ProjectModel.find({});
+			data.forEach((row) => this.projects.push(row));
 			return this.projects;
 		} catch (err) {
 			Logger.error(` Error on find all projects, ${err} `);

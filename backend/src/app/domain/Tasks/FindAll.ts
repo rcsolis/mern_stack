@@ -4,7 +4,7 @@
  * @author Rafael Chavez
  * @description Define the use case for Get all tasks
  */
-import Logger from "app/interfaces/logger";
+import Logger from "../../interfaces/logger";
 import { iTask } from "../../entities/Tasks";
 import MongoAdapter from "../../interfaces/database/mongo";
 
@@ -20,7 +20,9 @@ export default class FindAllTasks {
 	async exec(): Promise<Array<iTask>> {
 		// Get from database
 		try {
+			Logger.debug("Find query");
 			const data = await this.database.TaskModel.find();
+			Logger.debug("End Find query");
 			// Parse to Entities
 			data.forEach((row) => {
 				this.tasks.push(row);

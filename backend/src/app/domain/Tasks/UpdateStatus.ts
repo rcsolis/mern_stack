@@ -4,7 +4,7 @@
  * @author Rafael Chavez
  * @description Use case for Mark task as done
  */
-import Logger from "app/interfaces/logger";
+import Logger from "../../interfaces/logger";
 import MongoAdapter from "../../interfaces/database/mongo";
 
 export default class UpdateTaskStatus {

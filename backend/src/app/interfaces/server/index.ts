@@ -9,12 +9,12 @@ import helmet from "helmet";
 import morgan, { StreamOptions } from "morgan";
 import express, { Application } from "express";
 import { RouteType } from "./types";
-import taskRoutes from "app/routes/Tasks/routes";
-import projectRoutes from "app/routes/Projects/routes";
+import projectRoutes from "../../routes/Projects/routes";
 import Logger from "../logger";
+import taskRoutes from "../../routes/Tasks/routes";
 
 export default class Server {
-	app: Application;
+	public app: Application;
 	private routes: Array<RouteType>;
 
 	constructor() {
@@ -34,12 +34,9 @@ export default class Server {
 		this.app.use(express.urlencoded({ extended: true }));
 		//Configure logger system
 		const stream: StreamOptions = {
-			write: (message)=>Logger.http(message)
+			write: (message) => Logger.http(message),
 		};
-		this.app.use(morgan(
-			"combined",
-			{stream}
-		));
+		this.app.use(morgan("combined", { stream }));
 		// Add routers
 		this.routes.forEach((element) => {
 			Logger.debug(`Register routes: ${element.path}`);

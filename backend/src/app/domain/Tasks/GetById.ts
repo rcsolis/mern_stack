@@ -4,7 +4,7 @@
  * @author Rafael Chavez
  * @description Define use case for get task by id
  */
-import Logger from "app/interfaces/logger";
+import Logger from "../../interfaces/logger";
 import MongoAdapter from "../../interfaces/database/mongo";
 export default class GetTaskById {
 	private id: string;

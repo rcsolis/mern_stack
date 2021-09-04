@@ -4,7 +4,7 @@
  * @author Rafael Chavez
  * @description Define the use case for Get all pending tasks of a project
  */
-import Logger from "app/interfaces/logger";
+import Logger from "../../interfaces/logger";
 import { iTask } from "../../entities/Tasks";
 import MongoAdapter from "../../interfaces/database/mongo";
 export default class GetPendingTasksOfProject {

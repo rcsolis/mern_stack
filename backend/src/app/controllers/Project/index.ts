@@ -4,7 +4,7 @@
  * @author Rafael Chavez
  * @description Define route handlers for projects
  */
-import Logger from "app/interfaces/logger";
+import Logger from "../../interfaces/logger";
 import { Request, Response } from "express";
 import CreateProject from "../../domain/Projects/Create";
 import DeleteProjectById from "../../domain/Projects/DeleteById";

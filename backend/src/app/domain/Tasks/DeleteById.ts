@@ -5,7 +5,7 @@
  * @description Define the use case for create Delete project by Id
  * @requires
  */
-import Logger from "app/interfaces/logger";
+import Logger from "../../interfaces/logger";
 import MongoAdapter from "../../interfaces/database/mongo";
 
 export default class DeleteTaskById {

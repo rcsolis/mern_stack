@@ -4,8 +4,8 @@
  * @author Rafael Chavez
  * @description Use case for Get all projects
  */
-import MongoAdapter from "app/interfaces/database/mongo";
-import Logger from "app/interfaces/logger";
+import MongoAdapter from "../../interfaces/database/mongo";
+import Logger from "../../interfaces/logger";
 
 export default class GetProjectById {
 	private id: string;

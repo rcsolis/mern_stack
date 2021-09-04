@@ -4,8 +4,8 @@
  * @author Rafael Chavez
  * @description Use case for update project status
  */
-import MongoAdapter from "app/interfaces/database/mongo";
-import Logger from "app/interfaces/logger";
+import MongoAdapter from "../../interfaces/database/mongo";
+import Logger from "../../interfaces/logger";
 export default class UpdateProjectStatus {
 	private id: string;
 	private database: MongoAdapter;
