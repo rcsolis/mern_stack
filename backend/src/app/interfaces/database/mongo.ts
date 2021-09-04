@@ -14,13 +14,13 @@ export default class MongoAdapter {
 	public TaskModel: Model<imTask>;
 	public ProjectModel: Model<imProject>;
 
-	constructor() {
+	constructor () {
 		this.connectionStr = `mongodb://${process.env.DB_HOST}:${process.env.DB_PORT}/${process.env.DB_NAME}`;
 		this.TaskModel = model<imTask>("Task", TaskSchema);
 		this.ProjectModel = model<imProject>("Project", ProjectSchema);
 	}
 
-	async connect(): Promise<void> {
+	async connect (): Promise<void> {
 		try {
 			const options = {
 				useNewUrlParser: true,

@@ -10,7 +10,6 @@ import { iTask } from "../app/entities/Tasks";
 export const mockTasks: Array<iTask> = [
 	{
 		projectId: "p111",
-		id: "t123324",
 		name: "Task 1 Project 1",
 		done: false,
 		deadline: new Date("2021/08/30"),
@@ -19,7 +18,6 @@ export const mockTasks: Array<iTask> = [
 	},
 	{
 		projectId: "p111",
-		id: "t9999",
 		name: "Task 2 Project 1",
 		done: false,
 		deadline: new Date("2021/08/30"),
@@ -28,7 +26,6 @@ export const mockTasks: Array<iTask> = [
 	},
 	{
 		projectId: "p111",
-		id: "t6788999",
 		name: "Task 3 Project 1",
 		done: true,
 		deadline: new Date("2021/08/10"),
@@ -37,7 +34,6 @@ export const mockTasks: Array<iTask> = [
 	},
 	{
 		projectId: "p222",
-		id: "t2341231",
 		name: "Task 1 Project 2",
 		done: true,
 		deadline: new Date("2021/08/30"),

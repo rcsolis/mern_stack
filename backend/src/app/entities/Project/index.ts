@@ -7,10 +7,9 @@
  */
 
 export interface iProject {
-	id: string;
 	name: string;
 	description: string;
 	done: boolean;
-	created_at: Date;
-	updated_at: Date | null;
+	created_at?: Date;
+	updated_at?: Date;
 }

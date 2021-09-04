@@ -6,6 +6,9 @@ REST API created in [NodeJs] & [ExpressJs] with [Typescript], and [MongoDB] Comm
 
 Use of [Nodemon] and [Dotenv] for live reload and enviroment variable loading.
 
+Use EsLint and Husky to check in pre-commit.
+
+
 ## License
 
 Apache License 2.0
