@@ -1,76 +1,76 @@
 ### PROJECTS
-GET http://localhost:3000/projects
+GET http://localhost:8088/projects
 
 ### GET PROJECT BY ID
-GET http://localhost:3000/projects/get/p111
+GET http://localhost:8088/projects/get/p111
 
 ### GET DONE PROJECTS
-GET http://localhost:3000/projects/done
+GET http://localhost:8088/projects/done
 
 ### GET PENDING PROJECTS
-GET http://localhost:3000/projects/pending
+GET http://localhost:8088/projects/pending
 
 ### CREATE NEW PROJECT
-POST http://localhost:3000/projects/add
+POST http://localhost:8088/projects/add
 Content-Type: application/json
 
 {
-    "name":"New Project in NodeJS",
-    "description":"test project in NodeJS and MongoDB"
+    "name": "New Project in NodeJS",
+    "description": "test project in NodeJS and MongoDB"
 }
 
 ### DELETE A PROJECT BY ID
-DELETE http://localhost:3000/projects/delete/p333
+DELETE http://localhost:8088/projects/delete/p333
 
 ### MARK PROJECT AS DONE
-PUT  http://localhost:3000/projects/done/p222
+PUT  http://localhost:8088/projects/done/p222
 
 ### UPDATE PROJECT BY ID
-PUT http://localhost:3000/projects/update/p111
+PUT http://localhost:8088/projects/update/p111
 Content-Type: application/json
 
 {
-    "name":"Project Updated",
-    "description":"Updating project",
+    "name": "Project Updated",
+    "description": "Updating project",
     "done": true
 }
 
 ### TASKS
-GET http://localhost:3000/tasks/
+GET http://localhost:8088/tasks/
 
 ### GET TASK BY ID
-GET http://localhost:3000/tasks/get/t5234123
+GET http://localhost:8088/tasks/get/t5234123
 
 ### GET DONE TASKS
-GET http://localhost:3000/tasks/done
+GET http://localhost:8088/tasks/done
 
 ### GET DONE TASKS BY PROJECT
-GET http://localhost:3000/tasks/done/p111
+GET http://localhost:8088/tasks/done/p111
 
 ### CREATE NEW TASK
-POST http://localhost:3000/tasks/add
+POST http://localhost:8088/tasks/add
 Content-Type: application/json
 
 {
-    "projectId":"p222",
-    "name":"A new Task for project",
-    "done":false,
-    "deadline":"2021/09/10"
+    "projectId": "p222",
+    "name": "A new Task for project",
+    "done": false,
+    "deadline": "2021/09/10"
 }
 
 ### DELETE A TASK BY ID
-DELETE http://localhost:3000/tasks/delete/t6788999
+DELETE http://localhost:8088/tasks/delete/t6788999
 
 ### MARK TASK AS DONE
-PUT  http://localhost:3000/tasks/finish/t9999
+PUT  http://localhost:8088/tasks/finish/t9999
 
 ### UPDATE TASK BY ID
-PUT http://localhost:3000/tasks/update/t123324
+PUT http://localhost:8088/tasks/update/t123324
 Content-Type: application/json
 
 {
     "projectId": "p111",
-    "name":"this task was updated",
+    "name": "this task was updated",
     "done": true,
     "deadline": "2021/12/12"
 }

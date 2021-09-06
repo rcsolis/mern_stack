@@ -1,0 +1,54 @@
+.App {
+    text-align: center;
+    min-width: 100vw;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    overflow: hidden;
+    color: #282c34;
+}
+
+/* Header */
+.header {
+    background-color: var(--purple);
+    font-size: x-large;
+    font-family: var(--font-header);
+    min-height: 100px;
+    color: var(--white);
+    padding: 0;
+}
+
+header {
+    padding: 10px;
+    margin: 10px;
+}
+
+.navbar-flat {
+    background-color: var(--orange);
+    color: var(--white);
+}
+
+/* Cards */
+.card-custom-header {
+    background-color: var(--orange-dark);
+    color: var(--white);
+}
+
+.card-custom-header a {
+    color: inherit;
+    text-decoration: none;
+}
+
+/* Buttons */
+.btn-custom-primary {
+    background-color: var(--pink);
+    color: var(--white);
+
+}
+
+.btn-custom-secondary {
+    background-color: var(--green);
+    color: var(--white);
+}

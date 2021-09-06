@@ -1,0 +1,20 @@
+@import url('https://fonts.googleapis.com/css2?family=Lato&family=Raleway&display=swap');
+:root{
+  --font-body: 'Lato', -apple-system, BlinkMacSystemFont,sans-serif;
+  --font-header:'Raleway', -apple-system, BlinkMacSystemFont,sans-serif;
+  --light-text: 300;
+  --normal-text: 500;
+  --bold-text: 700;
+  --lg-text: calc(10px + 4vmin);
+  --md-text: calc(10px + 2vmin);
+  --sm-text: calc(10px + 1vmin);
+  --xs-text: calc(10px);
+  --purple: #2C2C54;
+  --orange-dark: #D15310;
+  --orange: #F49D6E;
+  --orange-light:#F5D6BA;
+  --pink: #A40E4C;
+  --green: #ACC3A6;
+  --black: #282C34;
+  --white: aliceblue;
+}
