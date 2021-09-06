@@ -11,12 +11,20 @@ This is a sample app for testing purpose. This app use the MERN stack and Typesc
 - Mark project as done
 - Mark task as done
 
-In the backend use [Nodemon] and [Dotenv]
+In the backend use [Nodemon] for development and [Dotenv] for load environment settings.
 
-## Tech
+## Technologies
 
-App divided in two, the backend REST API and the REACT frontend app.
-> Note: I'm use [Typescript] for both.
+App divided in two main modules, the backend and the frontend app.
+
+The backend it's a [Nodejs] + [Expresss] + [Mongo]
+application that use several plugins/libraries like Nodemon, Dotenv, Mongoose, Cors, Helmet, Morgan, Winston.
+
+The frontend it's a [React] + [RTK] (Redux toolkit) application, this use several libraries/plugins like React icons,
+React Bootstrap, React router dom and React thunk.
+
+
+> Note: I'm using [Typescript] for both.
 
 | Plugin | Description |
 | ------ | ------ |
